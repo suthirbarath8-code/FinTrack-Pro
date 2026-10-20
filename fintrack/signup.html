@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up · FinTrack Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display:flex;flex-direction:column;min-height:100vh">
+  <div id="nav"></div>
+  <main class="wrap" style="display:flex;align-items:center;justify-content:center;padding:30px 14px">
+    <div class="animate-fade-in" style="width:100%;max-width:480px">
+      <!-- Clean Brand Header without logo icon -->
+      <div style="text-align:center;margin-bottom:24px">
+        <h1 style="font-size:1.85rem;margin-bottom:6px">FinTrack<span style="color:var(--primary)">Pro</span></h1>
+        <div class="mut" style="font-size:0.9rem">Create your personal financial dashboard</div>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="card" style="box-shadow:var(--shadow-md)">
+        <div class="row between mb-3">
+          <div>
+            <h2 style="font-size:1.25rem;margin:0">Create Account</h2>
+            <div class="mut" style="font-size:0.82rem">Start monitoring and growing your wealth</div>
+          </div>
+          <span class="tag success">Free Pro Tier</span>
+        </div>
+
+        <form id="signup-form" onsubmit="event.preventDefault();submitSignUp()">
+          <label for="su-name">Full Name</label>
+          <input id="su-name" placeholder="e.g. David Chen" required autocomplete="name">
+
+          <label for="su-email">Email Address</label>
+          <input id="su-email" type="email" placeholder="david@company.com" required autocomplete="email">
+
+          <div class="row">
+            <div style="flex:1">
+              <label for="su-cur">Preferred Currency</label>
+              <select id="su-cur">
+                <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="JPY">JPY (¥)</option>
+                <option value="AUD">AUD (A$)</option>
+                <option value="CAD">CAD (C$)</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label for="su-avatar">Persona Avatar</label>
+              <select id="su-avatar">
+                <option value="exec">Executive</option>
+                <option value="tech">Tech / Pro</option>
+                <option value="invest">Investor</option>
+                <option value="shield">Protector</option>
+                <option value="global">Global</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="su-pass">Create Password</label>
+          <div class="row-nowrap mb-1" style="position:relative">
+            <input id="su-pass" type="password" placeholder="Min. 8 characters" required autocomplete="new-password" oninput="checkStrength(this.value)" style="padding-right:42px">
+            <button class="btn alt icon-only sm" type="button" onclick="togglePass('su-pass')" style="position:absolute;right:8px;top:8px;border:none;background:transparent" title="Toggle visibility">
+              <span class="svg-icon" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            </button>
+          </div>
+
+          <!-- 4-Stage Strength Meter -->
+          <div class="strength-meter">
+            <div class="strength-bar" id="str-1"></div>
+            <div class="strength-bar" id="str-2"></div>
+            <div class="strength-bar" id="str-3"></div>
+            <div class="strength-bar" id="str-4"></div>
+          </div>
+          <div id="str-label" class="mut mb-2" style="font-size:0.75rem;font-weight:600">Password strength</div>
+
+          <label for="su-pass-confirm">Confirm Password</label>
+          <input id="su-pass-confirm" type="password" placeholder="Re-enter password" required autocomplete="new-password">
+
+          <div class="mb-3" style="font-size:0.82rem">
+            <label style="display:inline-flex;align-items:flex-start;cursor:pointer;margin:0">
+              <input type="checkbox" id="su-terms" checked required style="width:auto;margin:3px 8px 0 0">
+              <span class="mut">I agree to the Terms of Service, Privacy Policy, and secure client-side storage policy.</span>
+            </label>
+          </div>
+
+          <div id="su-error" class="bad mb-2" style="font-size:0.85rem;font-weight:600"></div>
+
+          <button type="submit" class="btn" style="width:100%;padding:11px">Create Account & Enter Dashboard</button>
+        </form>
+
+        <!-- Link to Login -->
+        <div class="mt-4" style="text-align:center;padding-top:16px;border-top:1px solid var(--border-light);font-size:0.88rem">
+          <span class="mut">Already have an account?</span>
+          <a href="login.html" style="color:var(--primary);font-weight:700;margin-left:4px">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script>
+    function togglePass(id) {
+      const inp = document.getElementById(id);
+      if (inp) inp.type = inp.type === "password" ? "text" : "password";
+    }
+
+    function checkStrength(p) {
+      const len = p.length >= 8;
+      const upper = /[A-Z]/.test(p);
+      const num = /\d/.test(p);
+      const special = /[^A-Za-z0-9]/.test(p);
+      const score = [len, upper, num, special].filter(Boolean).length;
+
+      for (let i = 1; i <= 4; i++) {
+        const bar = document.getElementById("str-" + i);
+        if (bar) {
+          bar.className = "strength-bar";
+          if (i <= score) {
+            if (score <= 1) bar.classList.add("active-weak");
+            else if (score === 2) bar.classList.add("active-fair");
+            else if (score === 3) bar.classList.add("active-good");
+            else bar.classList.add("active-strong");
+          }
+        }
+      }
+
+      const lbl = document.getElementById("str-label");
+      if (lbl) {
+        if (!p) {
+          lbl.textContent = "Enter password";
+          lbl.className = "mut mb-2";
+        } else if (score <= 1) {
+          lbl.textContent = "Strength: Weak (Requires 8+ characters, uppercase & digits)";
+          lbl.className = "bad mb-2";
+        } else if (score === 2) {
+          lbl.textContent = "Strength: Moderate (Add digits or symbols)";
+          lbl.className = "wn mb-2";
+        } else if (score === 3) {
+          lbl.textContent = "Strength: Good (Add special characters for best security)";
+          lbl.className = "info mb-2";
+        } else {
+          lbl.textContent = "Strength: Strong & Secure";
+          lbl.className = "ok mb-2";
+        }
+      }
+    }
+
+    function submitSignUp() {
+      const name = document.getElementById("su-name").value.trim();
+      const email = document.getElementById("su-email").value.trim();
+      const cur = document.getElementById("su-cur").value;
+      const avatar = document.getElementById("su-avatar").value;
+      const pass = document.getElementById("su-pass").value;
+      const confirm = document.getElementById("su-pass-confirm").value;
+      const err = document.getElementById("su-error");
+
+      if (!name || name.length < 2) {
+        err.textContent = "Please enter your name.";
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        err.textContent = "Please enter a valid email address.";
+        return;
+      }
+      if (pass.length < 6) {
+        err.textContent = "Password must be at least 6 characters.";
+        return;
+      }
+      if (pass !== confirm) {
+        err.textContent = "Passwords do not match.";
+        return;
+      }
+
+      const users = get("users", []);
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        err.textContent = "That email is already registered. Please sign in.";
+        return;
+      }
+
+      const newUser = {
+        name,
+        email,
+        pass,
+        currency: cur,
+        avatar,
+        role: "Pro Member",
+        createdAt: today()
+      };
+
+      users.push(newUser);
+      set("users", users);
+      set("user", newUser);
+      set("currency", cur);
+
+      toast(`Account created! Welcome, ${name}!`, "success");
+      setTimeout(() => location.href = "tracker.html", 350);
+    }
+  </script>
+</body>
+</html>

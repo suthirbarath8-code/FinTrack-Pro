@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign In · FinTrack Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display:flex;flex-direction:column;min-height:100vh">
+  <div id="nav"></div>
+  <main class="wrap" style="display:flex;align-items:center;justify-content:center;padding:30px 14px">
+    <div class="animate-fade-in" style="width:100%;max-width:440px">
+      <!-- Clean Brand Header without logo icon -->
+      <div style="text-align:center;margin-bottom:24px">
+        <h1 style="font-size:1.85rem;margin-bottom:6px">FinTrack<span style="color:var(--primary)">Pro</span></h1>
+        <div class="mut" style="font-size:0.9rem">Enterprise Wealth & Financial Intelligence</div>
+      </div>
+
+      <!-- Login Card -->
+      <div class="card" style="box-shadow:var(--shadow-md)">
+        <div class="row between mb-3">
+          <div>
+            <h2 style="font-size:1.25rem;margin:0">Sign In</h2>
+            <div class="mut" style="font-size:0.82rem">Access your portfolio and cash flow ledger</div>
+          </div>
+          <span class="tag primary">Secure SSL</span>
+        </div>
+
+        <form id="login-form" onsubmit="event.preventDefault();submitLogin()">
+          <label for="l-email">Email Address</label>
+          <input id="l-email" type="email" placeholder="name@company.com" value="alex.morgan@fintrack.pro" required autocomplete="email">
+
+          <div class="row between">
+            <label for="l-pass" style="margin-bottom:0">Password</label>
+            <a href="javascript:void(0)" onclick="toast('Password reset link sent to registered email', 'info')" style="font-size:0.8rem;color:var(--primary);font-weight:600">Forgot?</a>
+          </div>
+          <div class="row-nowrap mb-2" style="position:relative">
+            <input id="l-pass" type="password" placeholder="••••••••" value="Password123!" required autocomplete="current-password" style="padding-right:42px">
+            <button class="btn alt icon-only sm" type="button" onclick="togglePassVisibility('l-pass', this)" style="position:absolute;right:8px;top:8px;border:none;background:transparent" title="Toggle visibility">
+              <span class="svg-icon" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            </button>
+          </div>
+
+          <div class="row between mb-3" style="font-size:0.85rem">
+            <label style="display:inline-flex;align-items:center;cursor:pointer;margin:0">
+              <input type="checkbox" id="l-remember" checked style="width:auto;margin-right:6px">
+              <span>Keep me signed in</span>
+            </label>
+          </div>
+
+          <div id="login-error" class="bad mb-2" style="font-size:0.85rem;font-weight:600"></div>
+
+          <button type="submit" class="btn" style="width:100%;padding:11px">Sign In to Dashboard</button>
+        </form>
+
+        <!-- Quick 1-Click Demo Profiles -->
+        <div style="margin:22px 0 16px;position:relative;text-align:center">
+          <hr style="border:0;border-top:1px solid var(--border)">
+          <span style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#fff;padding:0 12px;font-size:0.75rem;color:var(--text-muted);font-weight:700">OR 1-CLICK DEMO ACCESS</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn alt sm" style="width:100%;justify-content:space-between" onclick="quickLoginDemo('alex.morgan@fintrack.pro')">
+            <span>Alex Morgan (Pro Member)</span>
+            <span class="tag primary">₹ INR</span>
+          </button>
+          <button class="btn alt sm" style="width:100%;justify-content:space-between" onclick="quickLoginDemo('sarah.j@fintrack.pro')">
+            <span>Sarah Jenkins (Global Investor)</span>
+            <span class="tag info">$ USD</span>
+          </button>
+        </div>
+
+        <!-- Link to Sign Up -->
+        <div class="mt-4" style="text-align:center;padding-top:16px;border-top:1px solid var(--border-light);font-size:0.88rem">
+          <span class="mut">Don't have an account yet?</span>
+          <a href="signup.html" style="color:var(--primary);font-weight:700;margin-left:4px">Create Account</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script>
+    function togglePassVisibility(id, btn) {
+      const inp = document.getElementById(id);
+      if (!inp) return;
+      inp.type = inp.type === "password" ? "text" : "password";
+    }
+
+    function quickLoginDemo(email) {
+      const users = get("users", []);
+      const match = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || users[0];
+      if (match) {
+        set("user", match);
+        if (match.currency) set("currency", match.currency);
+        toast(`Logged in as ${match.name}!`, "success");
+        setTimeout(() => location.href = "tracker.html", 350);
+      }
+    }
+
+    function submitLogin() {
+      const email = document.getElementById("l-email").value.trim();
+      const pass = document.getElementById("l-pass").value;
+      const err = document.getElementById("login-error");
+
+      if (!email || !pass) {
+        err.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      const users = get("users", []);
+      const match = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+      if (!match) {
+        err.textContent = "Account not found. Click 'Create Account' below to register.";
+        return;
+      }
+
+      if (match.pass && match.pass !== pass) {
+        err.textContent = "Incorrect password. Please verify credentials.";
+        return;
+      }
+
+      set("user", match);
+      if (match.currency) set("currency", match.currency);
+      toast(`Welcome back, ${match.name}!`, "success");
+      setTimeout(() => location.href = "tracker.html", 350);
+    }
+  </script>
+</body>
+</html>
